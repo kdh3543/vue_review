@@ -1,26 +1,55 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="container">
+    <h2>To-Do List</h2>
+    <TodoSimpleForm @add-todo="addTodo" />
+      
+      <div v-if="!todos.length">
+        추가된 todo가 없습니다.
+      </div>
+      <TodoList :todos="todos" @toggle-todo="toggleTodo" @delete-todo="deleteTodo"/>
+      
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import {ref} from 'vue';
+import TodoSimpleForm from './components/TodoSimpleForm.vue';
+import TodoList from './components/TodoList.vue';
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
+    TodoSimpleForm,
+    TodoList,
+  },
+  setup() {
+   
+    const todos = ref([]);
+
+    const addTodo = (todo) => {
+        todos.value.push(todo);
+    }   
+
+    const deleteTodo = (index) => {
+      todos.value.splice(index, 1);
+    }
+
+    const toggleTodo = (index) => {
+      todos.value[index].completed = !todos.value[index].completed;
+    }
+
+    return{
+      addTodo,
+      todos,
+      deleteTodo,
+      toggleTodo
+    };
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  .todo{
+    color: gray;
+    text-decoration: line-through;
+  }
 </style>
