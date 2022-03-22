@@ -1,18 +1,20 @@
 <template>
   <div class="container">
     <h2>To-Do List</h2>
+    <input class="form-control" type="text" v-model="searchText" placeholder="Search">
+    <hr>
     <TodoSimpleForm @add-todo="addTodo" />
       
       <div v-if="!todos.length">
         추가된 todo가 없습니다.
       </div>
-      <TodoList :todos="todos" @toggle-todo="toggleTodo" @delete-todo="deleteTodo"/>
+      <TodoList :todos="filteredTodos" @toggle-todo="toggleTodo" @delete-todo="deleteTodo"/>
       
   </div>
 </template>
 
 <script>
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
 import TodoSimpleForm from './components/TodoSimpleForm.vue';
 import TodoList from './components/TodoList.vue';
 
@@ -37,11 +39,24 @@ export default {
       todos.value[index].completed = !todos.value[index].completed;
     }
 
+    const searchText = ref('');
+    const filteredTodos = computed(() => {
+      if(searchText.value){
+        return todos.value.filter(todo => {
+          return todo.subject.includes(searchText.value);
+        });
+      }
+
+      return todos.value;
+    });
+
     return{
       addTodo,
       todos,
       deleteTodo,
-      toggleTodo
+      toggleTodo,
+      searchText,
+      filteredTodos,
     };
   }
 }
